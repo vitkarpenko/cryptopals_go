@@ -1,12 +1,13 @@
 package set1
 
 import (
+	"fmt"
 	"sort"
 )
 
-var MostFrequentEnglishLetters = map[rune]struct{}{
-	'e': {}, 'a': {}, 'r': {}, 'i': {}, 'o': {},
-	't': {}, 'n': {}, 's': {}, 'l': {}, 'c': {},
+var MostFrequentEnglishLetters = map[rune]int{
+	'e': 10, 'a': 9, 'r': 8, 'i': 7, 'o': 6,
+	't': 5, 'n': 4, 's': 3, 'l': 2, 'c': 1,
 }
 
 func min(a, b int) int {
@@ -16,44 +17,15 @@ func min(a, b int) int {
 	return b
 }
 
-type RuneIntPair struct {
-	Rune rune
-	Int  int
-}
-
 type CipherRaitingPair struct {
 	Cipher  int
 	Raiting int
 }
 
-func findMostFrequentLetters(message string) map[rune]struct{} {
-	counts := make(map[rune]int)
-	for _, letter := range message {
-		counts[letter] += 1
-	}
-
-	var countsSlice []RuneIntPair
-	for k, v := range counts {
-		countsSlice = append(countsSlice, RuneIntPair{Rune: k, Int: v})
-	}
-
-	sort.Slice(countsSlice, func(i, j int) bool {
-		return countsSlice[i].Int > countsSlice[j].Int
-	})
-
-	result := make(map[rune]struct{})
-	for _, kv := range countsSlice[:min(len(countsSlice), 10)] {
-		result[kv.Rune] = struct{}{}
-	}
-
-	return result
-}
-
 func scoreStringAsEnglish(message string) (score int) {
-	frequentLetters := findMostFrequentLetters(message)
-	for letter := range frequentLetters {
-		if _, ok := MostFrequentEnglishLetters[letter]; ok {
-			score += 1
+	for _, letter := range message {
+		if letterScore, ok := MostFrequentEnglishLetters[letter]; ok {
+			score += letterScore
 		}
 	}
 	return
@@ -72,7 +44,11 @@ func DecryptXORedMessage(message string) map[int]string {
 	cipherRaitings := make(map[int]int)
 	for cipher := range [256]int{} {
 		xoredMessage := XORMessageByCipher(messageBytes, byte(cipher))
-		cipherRaitings[cipher] = scoreStringAsEnglish(string(xoredMessage))
+		cipherRaiting := scoreStringAsEnglish(string(xoredMessage))
+		// Ignore the weaklings.
+		if cipherRaiting >= 80 {
+			cipherRaitings[cipher] = cipherRaiting
+		}
 	}
 
 	var raitingsSlice []CipherRaitingPair
@@ -84,8 +60,10 @@ func DecryptXORedMessage(message string) map[int]string {
 		return raitingsSlice[i].Raiting > raitingsSlice[j].Raiting
 	})
 
-	result := make(map[int]string, 10)
-	for _, cipherResult := range raitingsSlice[:10] {
+	result := make(map[int]string)
+	for _, cipherResult := range raitingsSlice[:min(len(raitingsSlice), 10)] {
+		fmt.Println(cipherResult)
+		fmt.Println(string(XORMessageByCipher(messageBytes, byte(cipherResult.Cipher))))
 		result[cipherResult.Cipher] = string(XORMessageByCipher(messageBytes, byte(cipherResult.Cipher)))
 	}
 	return result

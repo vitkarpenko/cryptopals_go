@@ -1,33 +1,8 @@
 package set1
 
 import (
-	"reflect"
 	"testing"
 )
-
-func Test_findMostFrequentLetters(t *testing.T) {
-	type args struct {
-		message string
-	}
-	tests := []struct {
-		name string
-		args args
-		want map[rune]struct{}
-	}{
-		{
-			name: "ok",
-			args: args{message: "aaaaabbbbcccddddeeeee"},
-			want: map[rune]struct{}{'a': {}, 'b': {}, 'c': {}, 'd': {}, 'e': {}},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := findMostFrequentLetters(tt.args.message); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("findMostFrequentLetters() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
 
 func Test_scoreStringAsEnglish(t *testing.T) {
 	type args struct {
