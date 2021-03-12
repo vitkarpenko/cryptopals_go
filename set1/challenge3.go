@@ -1,20 +1,12 @@
 package set1
 
 import (
-	"fmt"
 	"sort"
 )
 
 var MostFrequentEnglishLetters = map[rune]int{
 	'e': 10, 'a': 9, 'r': 8, 'i': 7, 'o': 6,
 	't': 5, 'n': 4, 's': 3, 'l': 2, 'c': 1,
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }
 
 type CipherRaitingPair struct {
@@ -38,7 +30,7 @@ func XORMessageByCipher(messageBytes []byte, cipher byte) (result []byte) {
 	return
 }
 
-func DecryptXORedMessage(message string) map[int]string {
+func DecryptXORedMessage(message string) string {
 	messageBytes := HexToBytes(message)
 
 	cipherRaitings := make(map[int]int)
@@ -60,11 +52,9 @@ func DecryptXORedMessage(message string) map[int]string {
 		return raitingsSlice[i].Raiting > raitingsSlice[j].Raiting
 	})
 
-	result := make(map[int]string)
-	for _, cipherResult := range raitingsSlice[:min(len(raitingsSlice), 10)] {
-		fmt.Println(cipherResult)
-		fmt.Println(string(XORMessageByCipher(messageBytes, byte(cipherResult.Cipher))))
-		result[cipherResult.Cipher] = string(XORMessageByCipher(messageBytes, byte(cipherResult.Cipher)))
+	if len(raitingsSlice) != 0 {
+		return string(XORMessageByCipher(messageBytes, byte(raitingsSlice[0].Cipher)))
+	} else {
+		return ""
 	}
-	return result
 }

@@ -23,12 +23,12 @@ func loadStringsFromFile(path string) (strings []string) {
 	return
 }
 
-func FindEncryptedMessage() (decrypted string) {
-	messages := loadStringsFromFile("set1/data/challenge4.txt")
+func FindEncryptedMessage() string {
+	messages := loadStringsFromFile("data/challenge4.txt")
 	for _, message := range messages {
-		if decrypted := DecryptXORedMessage(message); len(decrypted) != 0 {
-
+		if decryptedMessage := DecryptXORedMessage(message); len(decryptedMessage) != 0 {
+			return decryptedMessage
 		}
 	}
-	return
+	return ""
 }

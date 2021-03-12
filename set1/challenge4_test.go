@@ -9,7 +9,7 @@ func TestFindEncryptedMessage(t *testing.T) {
 	}{
 		{
 			name:          "ok",
-			wantDecrypted: "haha:)",
+			wantDecrypted: "Now that the party is jumping\n",
 		},
 	}
 	for _, tt := range tests {
